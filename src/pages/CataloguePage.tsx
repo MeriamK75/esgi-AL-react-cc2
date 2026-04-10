@@ -1,9 +1,9 @@
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { api } from "../services/api";
-import type { Movie } from "../types/movie";
-import { MovieCard } from "../components/MovieCard";
-import { SearchBar } from "../components/SearchBar";
+import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { api } from '../services/api';
+import type { Movie } from '../types/movie';
+import { MovieCard } from '../components/MovieCard';
+import { SearchBar } from '../components/SearchBar';
 
 // =============================================================
 // EXERCICE 2 — CataloguePage (8 pts)
@@ -30,16 +30,38 @@ import { SearchBar } from "../components/SearchBar";
 //
 
 export const CataloguePage = () => {
-  const [search, setSearch] = useState("");
-  const [genre, setGenre] = useState("");
+  const [search, setSearch] = useState('');
+  const [genre, setGenre] = useState('');
 
   // TODO : écrire le useQuery ici
+  const { data, error, isLoading } = useQuery<Movie[]>({
+    queryKey: ['movies', { search, genre }],
+    initialData: [],
+    queryFn: async () => {
+      const response = await fetch(
+        `/api/movies?search=${search}&genre=${genre}`,
+      );
+      if (!response.ok) throw new Error('Erreur HTTP');
 
+      return response.json();
+    },
+  });
+
+  {
+    if (isLoading) {
+      return 'Les données ne sont pas encore arrivées';
+    }
+  }
+  if (error) {
+    return 'La requête a échoué';
+  }
   return (
     <div>
       <h1 className="text-2xl font-bold mb-6">Catalogue</h1>
       <SearchBar onSearch={setSearch} onGenreChange={setGenre} />
-
+      {data.map((movie) => {
+        return <MovieCard key={movie.id} movie={movie} />;
+      })}
       {/* TODO : afficher loading, error, et la liste de films */}
     </div>
   );

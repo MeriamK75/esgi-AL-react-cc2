@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { GENRES } from "../types/movie";
+import { useState } from 'react';
+import { GENRES } from '../types/movie';
 
 type SearchBarProps = {
   onSearch: (search: string) => void;
@@ -25,8 +25,8 @@ type SearchBarProps = {
 //
 
 export const SearchBar = ({ onSearch, onGenreChange }: SearchBarProps) => {
-  const [search, setSearch] = useState("");
-  let genre = "";
+  const [search, setSearch] = useState('');
+  const [genre, setGenre] = useState('');
 
   return (
     <div className="flex gap-4 mb-6">
@@ -44,8 +44,9 @@ export const SearchBar = ({ onSearch, onGenreChange }: SearchBarProps) => {
       <select
         value={genre}
         onChange={(e) => {
-          genre = e.target.value;
-          onGenreChange(genre);
+          const value = e.target.value;
+          setGenre(value);
+          onGenreChange(value);
         }}
         className="px-4 py-2 border rounded-lg"
       >

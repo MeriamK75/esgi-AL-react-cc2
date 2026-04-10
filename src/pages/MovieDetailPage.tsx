@@ -1,7 +1,7 @@
-import { useParams } from "react-router";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { api } from "../services/api";
-import type { Movie } from "../types/movie";
+import { useParams } from 'react-router';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { api } from '../services/api';
+import type { Movie } from '../types/movie';
 
 // =============================================================
 // EXERCICE 3 — MovieDetailPage (8 pts)
@@ -37,5 +37,30 @@ import type { Movie } from "../types/movie";
 //
 
 export const MovieDetailPage = () => {
-  return <div>TODO : compléter cette page</div>;
+  const params = useParams();
+  const { data: movie, isLoading } = useQuery<Movie>({
+    queryKey: ['movies', params.id],
+    queryFn: async () => {
+      const response = await api.get('/movies/' + params.id);
+      return response.data;
+    },
+  });
+  if (isLoading) {
+    return 'Les données ne sont pas encore arrivées';
+  }
+  if (!movie) {
+    return null;
+  }
+  return (
+    <div>
+      <div>
+        <h1>{movie.title}</h1>
+        <h2>
+          {movie.director},{movie.year}
+        </h2>
+        <h2>{movie.genre}</h2>
+        <p>{movie.description}</p>
+      </div>
+    </div>
+  );
 };
